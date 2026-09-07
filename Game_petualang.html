@@ -1,0 +1,664 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Cerdas SD - SMK Cefada</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Family Quick Links -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            font-family: 'Nunito', sans-serif;
+            user-select: none;
+        }
+
+        h1, h2, h3, .font-fredoka {
+            font-family: 'Fredoka', cursive;
+        }
+
+        /* Glassmorphism & Custom Gradient Effects */
+        .bg-playful {
+            background: linear-gradient(135deg, #6EE7B7 0%, #3B82F6 50%, #9333EA 100%);
+            background-size: 200% 200%;
+            animation: gradientBG 12s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .card-glass {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border: 4px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.2), 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-bounce {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-bounce:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .btn-bounce:active {
+            transform: translateY(2px) scale(0.98);
+        }
+
+        /* Custom Pulse Animations */
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,215,0,0.6)); }
+            50% { transform: scale(1.08); filter: drop-shadow(0 0 18px rgba(255,215,0,0.9)); }
+        }
+        .animate-glow {
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="bg-playful min-h-screen flex flex-col justify-between text-gray-800 relative overflow-x-hidden">
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Top Header -->
+    <header class="p-4 sm:p-6 flex justify-between items-center max-w-5xl mx-auto w-full z-10">
+        <div class="flex items-center gap-3 bg-white/90 px-4 py-2 rounded-2xl shadow-lg border-2 border-white">
+            <div class="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center text-xl shadow-inner font-bold text-white">
+                <i class="fa-solid fa-graduation-cap text-indigo-900"></i>
+            </div>
+            <div>
+                <h1 class="text-lg sm:text-xl font-bold text-indigo-900 leading-tight">Petualangan Cerdas</h1>
+                <p class="text-xs text-indigo-600 font-semibold">Game Edukasi SD</p>
+            </div>
+        </div>
+
+        <!-- Audio & Stats Header Controls -->
+        <div class="flex items-center gap-3">
+            <button id="sound-btn" onclick="toggleSound()" class="bg-white/90 hover:bg-white text-indigo-800 w-11 h-11 rounded-2xl flex items-center justify-center text-lg font-bold shadow-lg border-2 border-white transition-all">
+                <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+            </button>
+            <div class="bg-amber-400 text-amber-950 font-bold px-4 py-2 rounded-2xl shadow-lg border-2 border-yellow-200 flex items-center gap-2">
+                <i class="fa-solid fa-star text-yellow-100 text-lg"></i>
+                <span id="total-score-badge" class="text-lg">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Game Container -->
+    <main class="flex-1 flex justify-center items-center p-4 z-10">
+        <div class="w-full max-w-2xl">
+            
+            <!-- SCREEN 1: Home / Character & Subject Selection -->
+            <div id="home-screen" class="card-glass rounded-3xl p-6 sm:p-8 text-center transition-all duration-300">
+                <div class="inline-block bg-indigo-100 text-indigo-700 font-bold px-4 py-1.5 rounded-full text-sm mb-3 border border-indigo-200">
+                    <i class="fa-solid fa-rocket mr-1"></i> Mari Belajar Sambil Bermain!
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-fredoka text-indigo-950 mb-2">Pilih Karakter & Mapel</h2>
+                <p class="text-gray-600 text-sm sm:text-base mb-6">Kumpulkan bintang dan tunjukkan ketangkasan berfikirmu!</p>
+
+                <!-- Avatar Selection -->
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Pilih Teman Petualangmu:</label>
+                    <div class="flex justify-center gap-3 sm:gap-4" id="avatar-picker">
+                        <button onclick="selectAvatar('🚀', this)" class="avatar-option bg-indigo-50 border-4 border-indigo-500 rounded-2xl p-3 text-3xl sm:text-4xl hover:scale-110 transition-transform">🚀</button>
+                        <button onclick="selectAvatar('🦊', this)" class="avatar-option bg-indigo-50 border-2 border-transparent rounded-2xl p-3 text-3xl sm:text-4xl hover:scale-110 transition-transform">🦊</button>
+                        <button onclick="selectAvatar('🦉', this)" class="avatar-option bg-indigo-50 border-2 border-transparent rounded-2xl p-3 text-3xl sm:text-4xl hover:scale-110 transition-transform">🦉</button>
+                        <button onclick="selectAvatar('🤖', this)" class="avatar-option bg-indigo-50 border-2 border-transparent rounded-2xl p-3 text-3xl sm:text-4xl hover:scale-110 transition-transform">🤖</button>
+                    </div>
+                </div>
+
+                <!-- Input Name -->
+                <div class="mb-6 max-w-xs mx-auto">
+                    <input type="text" id="player-name" placeholder="Masukkan Namamu..." class="w-full text-center px-4 py-3 rounded-2xl border-2 border-indigo-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 outline-none text-lg font-bold text-indigo-900 placeholder-gray-400 transition-all">
+                </div>
+
+                <!-- Subject Selection Grid -->
+                <div class="grid grid-cols-2 gap-3 sm:gap-4 mb-2">
+                    <button onclick="startSubject('math')" class="btn-bounce bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-4 sm:p-5 rounded-2xl text-left shadow-lg relative overflow-hidden group">
+                        <div class="text-3xl mb-1 group-hover:scale-110 transition-transform">🔢</div>
+                        <div class="font-fredoka text-lg sm:text-xl">Matematika</div>
+                        <div class="text-xs text-blue-100 opacity-90">Hitung & Logika</div>
+                    </button>
+                    <button onclick="startSubject('science')" class="btn-bounce bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-4 sm:p-5 rounded-2xl text-left shadow-lg relative overflow-hidden group">
+                        <div class="text-3xl mb-1 group-hover:scale-110 transition-transform">🌱</div>
+                        <div class="font-fredoka text-lg sm:text-xl">IPA</div>
+                        <div class="text-xs text-teal-100 opacity-90">Alam & Sains</div>
+                    </button>
+                    <button onclick="startSubject('indonesian')" class="btn-bounce bg-gradient-to-br from-amber-500 to-orange-600 text-white p-4 sm:p-5 rounded-2xl text-left shadow-lg relative overflow-hidden group">
+                        <div class="text-3xl mb-1 group-hover:scale-110 transition-transform">📚</div>
+                        <div class="font-fredoka text-lg sm:text-xl">Bahasa Indo</div>
+                        <div class="text-xs text-amber-100 opacity-90">Kata & Kalimat</div>
+                    </button>
+                    <button onclick="startSubject('general')" class="btn-bounce bg-gradient-to-br from-purple-500 to-pink-600 text-white p-4 sm:p-5 rounded-2xl text-left shadow-lg relative overflow-hidden group">
+                        <div class="text-3xl mb-1 group-hover:scale-110 transition-transform">🇮🇩</div>
+                        <div class="font-fredoka text-lg sm:text-xl">Umum & Pancasila</div>
+                        <div class="text-xs text-purple-100 opacity-90">Wawasan Bangsa</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: Quiz Gameplay Screen -->
+            <div id="quiz-screen" class="card-glass rounded-3xl p-6 sm:p-8 hidden relative transition-all duration-300">
+                
+                <!-- Status Top Bar -->
+                <div class="flex justify-between items-center mb-4 pb-4 border-b border-indigo-100">
+                    <!-- Avatar & Player Info -->
+                    <div class="flex items-center gap-2">
+                        <span id="active-avatar" class="text-3xl">🚀</span>
+                        <div>
+                            <span id="display-name" class="font-bold text-indigo-900 block leading-tight">Pemain</span>
+                            <span id="subject-badge" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">Matematika</span>
+                        </div>
+                    </div>
+
+                    <!-- Hearts & Combo -->
+                    <div class="flex items-center gap-4">
+                        <div class="flex gap-1 text-red-500 text-lg" id="hearts-container">
+                            <i class="fa-solid fa-heart"></i>
+                            <i class="fa-solid fa-heart"></i>
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                        <div id="combo-badge" class="hidden bg-orange-500 text-white font-bold text-xs px-2.5 py-1 rounded-full animate-bounce shadow">
+                            🔥 <span id="combo-count">2</span>x Combo
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar & Timer -->
+                <div class="mb-6">
+                    <div class="flex justify-between text-xs font-bold text-gray-500 mb-1">
+                        <span>Soal <span id="current-question-num">1</span> dari <span id="total-questions-num">5</span></span>
+                        <span>Skor Sesi: <span id="session-score" class="text-indigo-600">0</span></span>
+                    </div>
+                    <div class="w-full bg-gray-200 h-3 rounded-full overflow-hidden p-0.5 border border-gray-300">
+                        <div id="progress-bar" class="bg-gradient-to-r from-green-400 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: 20%"></div>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="bg-indigo-50/80 rounded-2xl p-5 mb-6 text-center border-2 border-indigo-100 shadow-inner min-h-[120px] flex flex-col justify-center items-center">
+                    <h3 id="question-text" class="text-lg sm:text-xl font-bold text-indigo-950 leading-relaxed">
+                        Pertanyaan akan muncul di sini...
+                    </h3>
+                </div>
+
+                <!-- Options Grid -->
+                <div id="options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    <!-- Generated dynamically -->
+                </div>
+            </div>
+
+            <!-- SCREEN 3: Score & Achievement Result Screen -->
+            <div id="result-screen" class="card-glass rounded-3xl p-6 sm:p-8 text-center hidden transition-all duration-300">
+                <div id="result-icon-wrapper" class="w-24 h-24 rounded-full bg-yellow-100 border-4 border-yellow-300 flex items-center justify-center text-5xl mx-auto mb-4 animate-glow">
+                    🏆
+                </div>
+                <h2 id="result-title" class="text-2xl sm:text-3xl font-fredoka text-indigo-950 mb-1">Luar Biasa!</h2>
+                <p id="result-subtitle" class="text-gray-600 text-sm mb-6">Kamu telah menyelesaikan tantangan kuis ini!</p>
+
+                <!-- Stars Rating -->
+                <div class="flex justify-center gap-2 text-3xl text-amber-400 mb-6" id="result-stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-3 gap-3 mb-6 text-center">
+                    <div class="bg-indigo-50 p-3 rounded-2xl border border-indigo-100">
+                        <span class="text-xs text-gray-500 font-semibold block">Skor</span>
+                        <span id="final-score" class="text-xl sm:text-2xl font-bold text-indigo-900">0</span>
+                    </div>
+                    <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-100">
+                        <span class="text-xs text-gray-500 font-semibold block">Benar</span>
+                        <span id="final-correct" class="text-xl sm:text-2xl font-bold text-emerald-600">0</span>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-2xl border border-amber-100">
+                        <span class="text-xs text-gray-500 font-semibold block">Max Combo</span>
+                        <span id="final-combo" class="text-xl sm:text-2xl font-bold text-amber-600">0x</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="restartCurrentSubject()" class="btn-bounce flex-1 bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Coba Lagi
+                    </button>
+                    <button onclick="showHomeScreen()" class="btn-bounce flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-house"></i> Pilih Mapel
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer & Copyright Section -->
+    <footer class="bg-indigo-950/90 text-indigo-200 text-center py-4 px-4 z-10 border-t border-indigo-800/50 backdrop-blur-md">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 text-xs sm:text-sm">
+            <p>&copy; 2026 <strong>Game Edukasi Cerdas SD</strong>. Hak Cipta Dilindungi.</p>
+            <div class="flex items-center gap-2 bg-indigo-900/60 px-3 py-1.5 rounded-full border border-indigo-700/50">
+                <i class="fa-solid fa-code text-pink-400"></i>
+                <span>Dibuat oleh: <strong class="text-white">Zahra Fitria</strong> (Siswi <strong class="text-yellow-300">SMK Cefada</strong>)</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /* Web Audio API Synthesizer (Zero External Dependencies) */
+        let audioCtx = null;
+        let isSoundMuted = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (isSoundMuted) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2); // G5
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now); // A3
+                osc.frequency.setValueAtTime(164.81, now + 0.15); // E3
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'win') {
+                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                notes.forEach((freq, idx) => {
+                    const noteOsc = audioCtx.createOscillator();
+                    const noteGain = audioCtx.createGain();
+                    noteOsc.type = 'triangle';
+                    noteOsc.frequency.setValueAtTime(freq, now + idx * 0.12);
+                    noteGain.connect(audioCtx.destination);
+                    noteOsc.connect(noteGain);
+                    noteGain.gain.setValueAtTime(0.25, now + idx * 0.12);
+                    noteGain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + 0.3);
+                    noteOsc.start(now + idx * 0.12);
+                    noteOsc.stop(now + idx * 0.12 + 0.3);
+                });
+            }
+        }
+
+        function toggleSound() {
+            isSoundMuted = !isSoundMuted;
+            const soundIcon = document.getElementById('sound-icon');
+            if (isSoundMuted) {
+                soundIcon.className = 'fa-solid fa-volume-xmark text-red-500';
+            } else {
+                soundIcon.className = 'fa-solid fa-volume-high text-indigo-800';
+                playSound('click');
+            }
+        }
+
+        const questionsDatabase = {
+            math: [
+                { question: "Berapakah hasil dari 15 + 27?", options: ["32", "42", "40", "38"], answer: 1 },
+                { question: "Jika kamu punya 8 apel dan dimakan 3, sisa berapa apelmu?", options: ["4 Apel", "5 Apel", "6 Apel", "3 Apel"], answer: 1 },
+                { question: "Manakah bentuk bangun datar yang memiliki 3 buah sisi?", options: ["Persegi", "Lingkaran", "Segitiga", "Trapesium"], answer: 2 },
+                { question: "Berapakah hasil dari 6 x 7?", options: ["42", "36", "48", "40"], answer: 0 },
+                { question: "Jam menunjukkan angka 12 tepat. Sudut yang dibentuk kedua jarum adalah...", options: ["90 Derajat", "180 Derajat", "0 Derajat", "45 Derajat"], answer: 2 }
+            ],
+            science: [
+                { question: "Hewan apa yang bernapas menggunakan insang?", options: ["Kucing", "Ikan", "Burung", "Kelinci"], answer: 1 },
+                { question: "Bagian tumbuhan yang berfungsi menyerap air dari tanah adalah...", options: ["Daun", "Bunga", "Batang", "Akar"], answer: 3 },
+                { question: "Planet yang menjadi tempat tinggal kita saat ini adalah...", options: ["Mars", "Bumi", "Venus", "Jupiter"], answer: 1 },
+                { question: "Benda cair jika dimasukkan ke dalam freezer akan berubah menjadi...", options: ["Gas", "Uap", "Padat (Es)", "Embun"], answer: 2 },
+                { question: "Organ tubuh manusia yang berfungsi untuk memompa darah adalah...", options: ["Jantung", "Paru-paru", "Lambung", "Hati"], answer: 0 }
+            ],
+            indonesian: [
+                { question: "Persamaan kata (sinonim) dari kata 'Pintar' adalah...", options: ["Rajin", "Pandai", "Cepat", "Hebat"], answer: 1 },
+                { question: "Lawan kata (antonim) dari kata 'Besar' adalah...", options: ["Kecil", "Panjang", "Tinggi", "Luas"], answer: 0 },
+                { question: "Kalimat yang berisi perintah atau ajakan biasanya diakhiri tanda...", options: ["Tanya (?)", "Titik (.)", "Seru (!)", "Koma (,)"], answer: 2 },
+                { question: "Ibu membeli buah di pasar. Kata kerja dalam kalimat tersebut adalah...", options: ["Ibu", "Membeli", "Buah", "Pasar"], answer: 1 },
+                { question: "Dongeng tentang kisah hewan yang dapat berbicara disebut...", options: ["Fabel", "Mitos", "Legenda", "Puisi"], answer: 0 }
+            ],
+            general: [
+                { question: "Apa nama Ibu Kota Negara Indonesia?", options: ["Bandung", "Surabaya", "Jakarta", "Medan"], answer: 2 },
+                { question: "Lambang dari Sila Pertama Pancasila adalah...", options: ["Bintang", "Rantai", "Pohon Beringin", "Banteng"], answer: 0 },
+                { question: "Bendera Negara Indonesia berwarna...", options: ["Merah dan Hijau", "Merah dan Putih", "Kuning dan Putih", "Biru dan Merah"], answer: 1 },
+                { question: "Lagu Kebangsaan Negara Indonesia adalah...", options: ["Indonesia Raya", "Garuda Pancasila", "Halo Halo Bandung", "Indonesia Pusaka"], answer: 0 },
+                { question: "Candi Borobudur terletak di provinsi...", options: ["Jawa Barat", "Jawa Tengah", "Jawa Timur", "Bali"], answer: 1 }
+            ]
+        };
+
+        let currentSubjectKey = 'math';
+        let currentQuestions = [];
+        let questionIndex = 0;
+        let score = 0;
+        let correctAnswersCount = 0;
+        let hearts = 3;
+        let combo = 0;
+        let maxCombo = 0;
+        let totalGlobalScore = 0;
+        let selectedAvatar = '🚀';
+        let playerName = 'Petualang Cilik';
+
+        function selectAvatar(emoji, btnEl) {
+            playSound('click');
+            selectedAvatar = emoji;
+            document.querySelectorAll('.avatar-option').forEach(btn => {
+                btn.classList.remove('border-indigo-500', 'border-4');
+                btn.classList.add('border-transparent', 'border-2');
+            });
+            btnEl.classList.remove('border-transparent', 'border-2');
+            btnEl.classList.add('border-indigo-500', 'border-4');
+        }
+
+        function startSubject(key) {
+            playSound('click');
+            const nameInput = document.getElementById('player-name').value.trim();
+            if (nameInput) playerName = nameInput;
+
+            currentSubjectKey = key;
+            currentQuestions = [...questionsDatabase[key]];
+            questionIndex = 0;
+            score = 0;
+            correctAnswersCount = 0;
+            hearts = 3;
+            combo = 0;
+            maxCombo = 0;
+
+            // Update UI elements for Quiz Screen
+            document.getElementById('active-avatar').innerText = selectedAvatar;
+            document.getElementById('display-name').innerText = playerName;
+            
+            const badgeMap = {
+                math: 'Matematika',
+                science: 'IPA',
+                indonesian: 'Bahasa Indonesia',
+                general: 'Umum & Pancasila'
+            };
+            document.getElementById('subject-badge').innerText = badgeMap[key];
+
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+
+            renderHearts();
+            updateComboBadge();
+            loadQuestion();
+        }
+
+        function renderHearts() {
+            const container = document.getElementById('hearts-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                if (i < hearts) {
+                    container.innerHTML += '<i class="fa-solid fa-heart animate-pulse"></i>';
+                } else {
+                    container.innerHTML += '<i class="fa-regular fa-heart text-gray-300"></i>';
+                }
+            }
+        }
+
+        function updateComboBadge() {
+            const badge = document.getElementById('combo-badge');
+            if (combo >= 2) {
+                badge.classList.remove('hidden');
+                document.getElementById('combo-count').innerText = combo;
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function loadQuestion() {
+            const q = currentQuestions[questionIndex];
+            document.getElementById('current-question-num').innerText = questionIndex + 1;
+            document.getElementById('total-questions-num').innerText = currentQuestions.length;
+            document.getElementById('session-score').innerText = score;
+
+            // Progress Bar
+            const progressPercent = ((questionIndex + 1) / currentQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            // Question Text
+            document.getElementById('question-text').innerText = q.question;
+
+            // Options
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+
+            const optionColors = [
+                'from-blue-50 to-indigo-50 border-blue-200 text-blue-900 hover:border-blue-400',
+                'from-emerald-50 to-teal-50 border-emerald-200 text-emerald-900 hover:border-emerald-400',
+                'from-amber-50 to-orange-50 border-amber-200 text-amber-900 hover:border-amber-400',
+                'from-purple-50 to-pink-50 border-purple-200 text-purple-900 hover:border-purple-400'
+            ];
+
+            q.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `btn-bounce w-full bg-gradient-to-r ${optionColors[idx % 4]} border-2 p-4 rounded-2xl text-left font-bold text-base sm:text-lg flex items-center justify-between shadow-sm transition-all`;
+                btn.innerHTML = `
+                    <span>${optText}</span>
+                    <span class="w-8 h-8 rounded-full bg-white/80 border flex items-center justify-center text-xs font-black shadow-inner">
+                        ${String.fromCharCode(65 + idx)}
+                    </span>
+                `;
+                btn.onclick = () => handleAnswer(idx, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selectedIndex, clickedBtn) {
+            const q = currentQuestions[questionIndex];
+            const allOptionBtns = document.getElementById('options-grid').children;
+
+            // Disable all buttons during check
+            for (let btn of allOptionBtns) {
+                btn.disabled = true;
+                btn.classList.remove('btn-bounce');
+            }
+
+            if (selectedIndex === q.answer) {
+                // CORRECT ANSWER
+                playSound('correct');
+                clickedBtn.classList.remove('from-blue-50', 'from-emerald-50', 'from-amber-50', 'from-purple-50');
+                clickedBtn.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white', 'ring-4', 'ring-emerald-200');
+                
+                combo++;
+                if (combo > maxCombo) maxCombo = combo;
+                correctAnswersCount++;
+                score += 20 + (combo * 5); // Combo Bonus
+                
+                updateComboBadge();
+                createMiniSparkles(clickedBtn);
+            } else {
+                // WRONG ANSWER
+                playSound('wrong');
+                clickedBtn.classList.add('bg-red-500', 'border-red-600', 'text-white', 'ring-4', 'ring-red-200');
+                
+                // Highlight correct one
+                allOptionBtns[q.answer].classList.add('bg-emerald-500', 'border-emerald-600', 'text-white');
+                
+                combo = 0;
+                hearts--;
+                updateComboBadge();
+                renderHearts();
+            }
+
+            // Next question or Game Over
+            setTimeout(() => {
+                if (hearts <= 0 || questionIndex >= currentQuestions.length - 1) {
+                    finishQuiz();
+                } else {
+                    questionIndex++;
+                    loadQuestion();
+                }
+            }, 1200);
+        }
+
+        function createMiniSparkles(element) {
+            const rect = element.getBoundingClientRect();
+            for (let i = 0; i < 8; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.innerText = '✨';
+                sparkle.style.position = 'fixed';
+                sparkle.style.left = `${rect.left + rect.width / 2 + (Math.random() * 80 - 40)}px`;
+                sparkle.style.top = `${rect.top + (Math.random() * 20 - 10)}px`;
+                sparkle.style.pointerEvents = 'none';
+                sparkle.style.zIndex = '99';
+                sparkle.style.fontSize = '20px';
+                sparkle.style.transition = 'all 0.8s ease-out';
+                document.body.appendChild(sparkle);
+
+                setTimeout(() => {
+                    sparkle.style.transform = `translate(${(Math.random() - 0.5) * 100}px, -60px) scale(0)`;
+                    sparkle.style.opacity = '0';
+                }, 20);
+
+                setTimeout(() => sparkle.remove(), 850);
+            }
+        }
+
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#f43f5e', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ec4899'];
+
+            for (let i = 0; i < 90; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 0.7) * 16,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 8 + 4,
+                    gravity: 0.25,
+                    opacity: 1
+                });
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += p.gravity;
+                    p.opacity -= 0.012;
+
+                    if (p.opacity > 0) {
+                        active = true;
+                        ctx.globalAlpha = p.opacity;
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                if (active) requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+        }
+
+        function finishQuiz() {
+            playSound('win');
+            triggerConfetti();
+
+            totalGlobalScore += score;
+            document.getElementById('total-score-badge').innerText = totalGlobalScore;
+
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = `${correctAnswersCount}/${currentQuestions.length}`;
+            document.getElementById('final-combo').innerText = `${maxCombo}x`;
+
+            // Calculate Stars & Result Titles
+            const starsContainer = document.getElementById('result-stars');
+            const resultTitle = document.getElementById('result-title');
+            const resultSubtitle = document.getElementById('result-subtitle');
+
+            let starsHTML = '';
+            if (correctAnswersCount >= 4) {
+                starsHTML = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>';
+                resultTitle.innerText = `Luar Biasa, ${playerName}! 🎉`;
+                resultSubtitle.innerText = 'Kamu menjawab dengan sangat tepat & pintar!';
+            } else if (correctAnswersCount >= 2) {
+                starsHTML = '<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star text-gray-300"></i>';
+                resultTitle.innerText = `Bagai Bintang! ⭐`;
+                resultSubtitle.innerText = 'Hasil yang bagus! Teruskan semangat belajarmu!';
+            } else {
+                starsHTML = '<i class="fa-solid fa-star"></i><i class="fa-regular fa-star text-gray-300"></i><i class="fa-regular fa-star text-gray-300"></i>';
+                resultTitle.innerText = `Tetap Semangat! 💪`;
+                resultSubtitle.innerText = 'Jangan menyerah, coba lagi untuk skor lebih tinggi!';
+            }
+            starsContainer.innerHTML = starsHTML;
+        }
+
+        function restartCurrentSubject() {
+            startSubject(currentSubjectKey);
+        }
+
+        function showHomeScreen() {
+            playSound('click');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('home-screen').classList.remove('hidden');
+        }
+
+        // Initialize Application
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti-canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
+
+```
