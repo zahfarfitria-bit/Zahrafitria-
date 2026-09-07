@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Edukasi Interaktif</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .question-box {
+            font-size: 18px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 20px;
+            min-height: 50px;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background-color: #f0f0f0;
+            border: 2px solid #00d2ff;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #00d2ff;
+            color: #fff;
+        }
+
+        .correct {
+            background-color: #28a745 !important;
+            color: white;
+            border-color: #28a745;
+        }
+
+        .incorrect {
+            background-color: #dc3545 !important;
+            color: white;
+            border-color: #dc3545;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .score-board {
+            font-size: 16px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .next-btn {
+            background-color: #ff7e5f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .next-btn:hover {
+            background-color: #feb47b;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #ffffff;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>Game Kuis Edukasi</h1>
+        <div id="quiz">
+            <div id="question" class="question-box">Pertanyaan akan muncul di sini...</div>
+            <div id="answer-buttons" class="btn-grid">
+                </div>
+            <div class="controls">
+                <div class="score-board">Skor: <span id="score">0</span></div>
+                <button id="next-btn" class="next-btn" onclick="nextQuestion()">Lanjut</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; <span id="year"></span> Game Edukasi Interaktif. Hak Cipta Dilindungi.<br>
+        Dikembangkan oleh <strong>Zahra Fitria</strong> - <strong>SMK Cefada</strong>
+    </footer>
+
+    <script>
+        // Set tahun otomatis untuk hak cipta
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Data Soal Edukasi
+        const questions = [
+            {
+                question: "Planet manakah yang dikenal sebagai Planet Merah?",
+                answers: [
+                    { text: "Venus", correct: false },
+                    { text: "Mars", correct: true },
+                    { text: "Yupiter", correct: false },
+                    { text: "Saturnus", correct: false }
+                ]
+            },
+            {
+                question: "Berapakah hasil dari 12 x 8?",
+                answers: [
+                    { text: "86", correct: false },
+                    { text: "94", correct: false },
+                    { text: "96", correct: true },
+                    { text: "108", correct: false }
+                ]
+            },
+            {
+                question: "Organ tubuh manusia yang berfungsi memompa darah adalah...",
+                answers: [
+                    { text: "Paru-paru", correct: false },
+                    { text: "Jantung", correct: true },
+                    { text: "Hati", correct: false },
+                    { text: "Ginjal", correct: false }
+                ]
+            },
+            {
+                question: "Bahasa pemrograman yang digunakan untuk struktur dasar halaman web adalah...",
+                answers: [
+                    { text: "HTML", correct: true },
+                    { text: "CSS", correct: false },
+                    { text: "Python", correct: false },
+                    { text: "SQL", correct: false }
+                ]
+            }
+        ];
+
+        const questionElement = document.getElementById("question");
+        const answerButtonsElement = document.getElementById("answer-buttons");
+        const nextButton = document.getElementById("next-btn");
+        const scoreElement = document.getElementById("score");
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            scoreElement.innerText = score;
+            nextButton.innerText = "Lanjut";
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            let currentQuestion = questions[currentQuestionIndex];
+            questionElement.innerText = (currentQuestionIndex + 1) + ". " + currentQuestion.question;
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement("button");
+                button.innerText = answer.text;
+                button.classList.add("btn");
+                if (answer.correct) {
+                    button.dataset.correct = answer.correct;
+                }
+                button.addEventListener("click", selectAnswer);
+                answerButtonsElement.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            nextButton.style.display = "none";
+            while (answerButtonsElement.firstChild) {
+                answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            const selectedBtn = e.target;
+            const isCorrect = selectedBtn.dataset.correct === "true";
+            
+            if (isCorrect) {
+                selectedBtn.classList.add("correct");
+                score += 10;
+                scoreElement.innerText = score;
+            } else {
+                selectedBtn.classList.add("incorrect");
+            }
+
+            Array.from(answerButtonsElement.children).forEach(button => {
+                if (button.dataset.correct === "true") {
+                    button.classList.add("correct");
+                }
+                button.disabled = true;
+            });
+
+            nextButton.style.display = "block";
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showScore();
+            }
+        }
+
+        function showScore() {
+            resetState();
+            questionElement.innerText = `Kuis Selesai! Skor Akhir Anda: ${score} dari ${questions.length * 10}`;
+            nextButton.innerText = "Main Lagi";
+            nextButton.style.display = "block";
+            nextButton.onclick = startGame;
+        }
+
+        // Mulai game saat halaman dimuat
+        startGame();
+    </script>
+</body>
+</html>
