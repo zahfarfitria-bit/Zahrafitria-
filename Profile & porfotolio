@@ -1,0 +1,880 @@
+ ```html
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zhara Fitria - Profil & Portfolio Fun Zone ✨</title>
+
+    <!-- PWA Primary Meta Tags -->
+    <meta name="theme-color" content="#FF8ECA">
+    <meta name="description" content="Profil & Portfolio Zhara Fitria - Siswi RPL SMK Cefada. Pengembang Web, Game Interaktif & Penyanyi!">
+    <link rel="apple-touch-icon" href="https://api.iconify.design/twemoji:star.svg">
+
+    <!-- Dynamic PWA Manifest -->
+    <link rel="manifest" id="pwa-manifest">
+
+    <!-- Google Fonts: Fredoka & Quicksand for cute playful look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        candyPink: '#FF8ECA',
+                        candyPurple: '#B19FFB',
+                        candyBlue: '#70D6FF',
+                        candyYellow: '#FFD670',
+                        candyGreen: '#A8F0E5',
+                        candyOrange: '#FF9F1C',
+                        darkBg: '#1A102F',
+                        darkCard: '#2A1B4E'
+                    },
+                    fontFamily: {
+                        sans: ['Fredoka', 'Quicksand', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-4deg); }
+            50% { transform: rotate(4deg); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 142, 202, 0.6); }
+            50% { box-shadow: 0 0 30px rgba(112, 214, 255, 0.9); }
+        }
+
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .animate-float-delayed { animation: float 5s ease-in-out 1.5s infinite; }
+        .animate-bounce-subtle { animation: bounce-subtle 2s infinite; }
+        .animate-wiggle { animation: wiggle 1s infinite alternate ease-in-out; }
+        .pulse-glow { animation: pulse-glow 3s infinite; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFE5EC;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF8ECA;
+            border-radius: 10px;
+            border: 3px solid #FFE5EC;
+        }
+
+        .bubble-btn {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .bubble-btn:hover {
+            transform: scale(1.08) translateY(-3px);
+        }
+        .bubble-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Sparkle cursor particle effect styling */
+        .sparkle-particle {
+            position: fixed;
+            pointer-events: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            z-index: 9999;
+            animation: fadeOut 0.8s linear forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.2) translateY(20px); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-pink-100 via-purple-50 to-blue-100 text-slate-800 font-sans min-h-screen transition-colors duration-500 overflow-x-hidden selection:bg-pink-300 selection:text-pink-900" id="app-body">
+
+    <!-- Top Floating Navbar -->
+    <nav class="fixed top-3 left-1/2 -translate-x-1/2 w-[92%] max-w-5xl z-50 bg-white/80 dark:bg-darkCard/90 backdrop-blur-md border-4 border-pink-300 dark:border-purple-500 rounded-full px-4 py-2 shadow-lg flex items-center justify-between transition-all duration-300">
+        <a href="#hero" class="flex items-center gap-2 group">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-pink-400 to-yellow-300 flex items-center justify-center text-white text-xl font-bold shadow-md group-hover:rotate-12 transition-transform">
+                🎤
+            </div>
+            <span class="font-extrabold text-xl tracking-wide bg-gradient-to-r from-pink-500 via-purple-600 to-blue-500 bg-clip-text text-transparent">
+                Zhara Fitria
+            </span>
+        </a>
+
+        <!-- Desktop Menu Links -->
+        <div class="hidden md:flex items-center gap-6 font-bold text-slate-700 dark:text-pink-200 text-sm">
+            <a href="#about" class="hover:text-pink-500 transition-colors flex items-center gap-1">✨ Profil</a>
+            <a href="#skills" class="hover:text-pink-500 transition-colors flex items-center gap-1">🚀 Skill</a>
+            <a href="#projects" class="hover:text-pink-500 transition-colors flex items-center gap-1">🎮 Proyek</a>
+            <a href="#game-zone" class="hover:text-pink-500 transition-colors flex items-center gap-1">🧮 Game Berhitung</a>
+            <a href="#contact" class="hover:text-pink-500 transition-colors flex items-center gap-1">💌 Kontak</a>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="flex items-center gap-2">
+            <!-- PWA Install Button -->
+            <button id="pwa-install-btn" class="hidden bubble-btn bg-yellow-400 hover:bg-yellow-300 text-slate-900 px-3 py-1.5 rounded-full text-xs font-black shadow-md flex items-center gap-1 border-2 border-yellow-500">
+                <i class="fa-solid fa-download animate-bounce"></i> Install App
+            </button>
+
+            <!-- Sound Effect Toggle -->
+            <button id="sound-toggle" onclick="toggleAudioSynth()" class="p-2 rounded-full bg-pink-100 dark:bg-purple-900 text-pink-600 dark:text-pink-300 hover:scale-110 transition-transform border-2 border-pink-300" title="Suara Efek">
+                <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+            </button>
+
+            <!-- Mobile Hamburger Button -->
+            <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-full bg-pink-200 text-pink-700 focus:outline-none">
+                <i class="fa-solid fa-bars text-lg"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden fixed top-20 left-1/2 -translate-x-1/2 w-[90%] bg-white dark:bg-darkCard border-4 border-pink-300 rounded-2xl p-5 shadow-2xl z-40 flex-col gap-3 font-bold text-center text-slate-800 dark:text-white">
+        <a href="#about" onclick="toggleMobileMenu()" class="p-2 hover:bg-pink-100 dark:hover:bg-purple-800 rounded-xl">✨ Profil & Hobi</a>
+        <a href="#skills" onclick="toggleMobileMenu()" class="p-2 hover:bg-pink-100 dark:hover:bg-purple-800 rounded-xl">🚀 Keahlian Skill</a>
+        <a href="#projects" onclick="toggleMobileMenu()" class="p-2 hover:bg-pink-100 dark:hover:bg-purple-800 rounded-xl">🎮 Proyek Game</a>
+        <a href="#game-zone" onclick="toggleMobileMenu()" class="p-2 hover:bg-pink-100 dark:hover:bg-purple-800 rounded-xl">🧮 Main Game Berhitung</a>
+        <a href="#contact" onclick="toggleMobileMenu()" class="p-2 hover:bg-pink-100 dark:hover:bg-purple-800 rounded-xl">💌 Hubungi Zhara</a>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="pt-28 pb-16 px-4 max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10 relative">
+        <!-- Floating Decorative Icons -->
+        <div class="absolute top-20 left-4 text-3xl animate-float">🎵</div>
+        <div class="absolute top-40 right-10 text-4xl animate-float-delayed">⭐</div>
+        <div class="absolute bottom-10 left-1/3 text-3xl animate-wiggle">🎮</div>
+
+        <!-- Left Text Content -->
+        <div class="flex-1 text-center md:text-left z-10">
+            <div class="inline-flex items-center gap-2 bg-white/90 border-2 border-pink-400 px-4 py-1.5 rounded-full text-pink-600 font-bold text-sm mb-4 shadow-sm animate-bounce-subtle">
+                <span>👋 Halo Semuanya! Welcome to My World</span>
+            </div>
+            
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-tight mb-4">
+                Saya <span class="bg-gradient-to-r from-pink-500 via-purple-500 to-sky-400 bg-clip-text text-transparent underline decoration-wavy decoration-yellow-400">ZHARA FITRIA</span> ✨
+            </h1>
+
+            <p class="text-lg sm:text-xl font-semibold text-slate-700 dark:text-slate-300 mb-6 leading-relaxed">
+                Siswi <span class="bg-yellow-200 dark:bg-yellow-600 dark:text-white px-2 py-0.5 rounded-lg border border-yellow-400">SMK Cefada</span> Jurusan <span class="bg-blue-200 dark:bg-blue-600 dark:text-white px-2 py-0.5 rounded-lg border border-blue-400">Rekayasa Perangkat Lunak (RPL)</span>. 
+                Suka ngoding aplikasi, bikin game edukasi interaktif, dan hobi <span class="text-pink-500 font-extrabold">bernyanyi 🎤🎶</span>!
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                <a href="#game-zone" class="bubble-btn bg-gradient-to-r from-pink-500 to-purple-500 text-white font-extrabold text-base px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-pink-300/50 border-2 border-white flex items-center gap-2">
+                    <i class="fa-solid fa-gamepad text-xl"></i> Main Game Berhitung
+                </a>
+                <a href="https://github.com/zahfarfitria-bit/Zahrafitria-" target="_blank" class="bubble-btn bg-white hover:bg-slate-50 text-slate-800 font-extrabold text-base px-6 py-3.5 rounded-2xl shadow-md border-2 border-purple-300 flex items-center gap-2">
+                    <i class="fa-brands fa-github text-xl text-purple-600"></i> GitHub Proyek
+                </a>
+            </div>
+        </div>
+
+        <!-- Right Photo / Avatar Frame -->
+        <div class="relative z-10 flex flex-col items-center">
+            <!-- Glowing Photo Container -->
+            <div class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-3xl bg-gradient-to-tr from-pink-400 via-yellow-300 to-sky-400 p-3 shadow-2xl pulse-glow transform rotate-2 hover:rotate-0 transition-transform duration-300">
+                <div class="w-full h-full bg-white rounded-2xl overflow-hidden relative border-4 border-white flex items-center justify-center group">
+                    <!-- Profile Photo Image -->
+                    <img id="user-photo" src="https://webschool.id/siswa/uploads/siswa_1788921492_adba57af.jpg" alt="Foto Zhara Fitria" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    
+                    <!-- Music badge on photo -->
+                    <div class="absolute bottom-2 right-2 bg-pink-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 border-2 border-white">
+                        🎤 Singer & Dev
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Photo Change Tool -->
+            <div class="mt-4 flex items-center gap-2">
+                <label for="photo-upload" class="cursor-pointer bg-white dark:bg-darkCard border-2 border-pink-400 text-pink-600 dark:text-pink-300 hover:bg-pink-50 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1 transition-colors">
+                    <i class="fa-solid fa-camera"></i> Ganti Foto Asli
+                </label>
+                <input type="file" id="photo-upload" accept="image/*" class="hidden" onchange="previewPhoto(event)">
+                
+                <button onclick="resetPhoto()" class="bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 text-slate-700 dark:text-slate-200 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
+                    Reset Avatar
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT ME & HOBBY SECTION -->
+    <section id="about" class="py-16 px-4 max-w-5xl mx-auto">
+        <div class="bg-white/90 dark:bg-darkCard/90 rounded-3xl p-6 sm:p-10 border-4 border-sky-300 shadow-xl relative overflow-hidden">
+            <!-- Decorative Background Circle -->
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-sky-100 dark:bg-sky-900/30 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="text-center mb-8">
+                <span class="bg-sky-100 text-sky-700 text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border border-sky-300">Biodata Singkat</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mt-2">
+                    Tentang <span class="text-pink-500">Zhara Fitria</span> 🌟
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <!-- Info Cards Grid -->
+                <div class="space-y-4">
+                    <div class="bg-pink-50 dark:bg-purple-950/50 p-4 rounded-2xl border-2 border-pink-200 flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-pink-400 text-white flex items-center justify-center text-2xl shrink-0 shadow-md">
+                            🏫
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 dark:text-pink-200 text-lg">Sekolah & Jurusan</h3>
+                            <p class="text-slate-600 dark:text-slate-300 font-medium">SMK Cefada — Rekayasa Perangkat Lunak (RPL)</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Belajar pemrograman web, basis data, dan pembuatan aplikasi game interaktif.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-purple-50 dark:bg-purple-950/50 p-4 rounded-2xl border-2 border-purple-200 flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-400 text-white flex items-center justify-center text-2xl shrink-0 shadow-md">
+                            🎤
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 dark:text-purple-200 text-lg">Hobi Favorit</h3>
+                            <p class="text-slate-600 dark:text-slate-300 font-medium">Bernyanyi & Mengembangkan Game Fun</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Suka bernyanyi di waktu luang dan mengekspresikan kreativitas lewat musik & coding!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Mini Piano Keyboard widget for Singing Hobby -->
+                <div class="bg-gradient-to-br from-yellow-100 to-pink-100 dark:from-slate-800 dark:to-purple-900 p-5 rounded-2xl border-3 border-yellow-300 shadow-inner flex flex-col items-center">
+                    <div class="text-center mb-3">
+                        <span class="font-bold text-sm text-slate-800 dark:text-yellow-300">🎹 Piano Mini Zhara - Coba Bunyikan!</span>
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Klik tombol nada di bawah untuk bermain musik sederhana:</p>
+                    </div>
+
+                    <!-- Piano Keys Container -->
+                    <div class="flex gap-1.5 sm:gap-2 justify-center my-2">
+                        <button onclick="playNote(261.63, 'Do')" class="bubble-btn bg-white hover:bg-pink-100 text-slate-800 font-extrabold w-10 sm:w-12 h-24 rounded-b-xl border-2 border-slate-300 shadow flex flex-col justify-end pb-2 items-center text-xs">Do</button>
+                        <button onclick="playNote(293.66, 'Re')" class="bubble-btn bg-white hover:bg-pink-100 text-slate-800 font-extrabold w-10 sm:w-12 h-24 rounded-b-xl border-2 border-slate-300 shadow flex flex-col justify-end pb-2 items-center text-xs">Re</button>
+                        <button onclick="playNote(329.63, 'Mi')" class="bubble-btn bg-white hover:bg-pink-100 text-slate-800 font-extrabold w-10 sm:w-12 h-24 rounded-b-xl border-2 border-slate-300 shadow flex flex-col justify-end pb-2 items-center text-xs">Mi</button>
+                        <button onclick="playNote(349.23, 'Fa')" class="bubble-btn bg-white hover:bg-pink-100 text-slate-800 font-extrabold w-10 sm:w-12 h-24 rounded-b-xl border-2 border-slate-300 shadow flex flex-col justify-end pb-2 items-center text-xs">Fa</button>
+                        <button onclick="playNote(392.00, 'Sol')" class="bubble-btn bg-white hover:bg-pink-100 text-slate-800 font-extrabold w-10 sm:w-12 h-24 rounded-b-xl border-2 border-slate-300 shadow flex flex-col justify-end pb-2 items-center text-xs">Sol</button>
+                        <button onclick="playNote(440.00, 'La')" class="bubble-btn bg-white hover:bg-pink-100 text-slate-800 font-extrabold w-10 sm:w-12 h-24 rounded-b-xl border-2 border-slate-300 shadow flex flex-col justify-end pb-2 items-center text-xs">La</button>
+                        <button onclick="playNote(493.88, 'Si')" class="bubble-btn bg-white hover:bg-pink-100 text-slate-800 font-extrabold w-10 sm:w-12 h-24 rounded-b-xl border-2 border-slate-300 shadow flex flex-col justify-end pb-2 items-center text-xs">Si</button>
+                    </div>
+                    <span id="note-played-display" class="h-6 text-xs font-extrabold text-pink-600 dark:text-pink-300 animate-pulse mt-1">Tekan tuts piano di atas 🎶</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SKILLS SECTION -->
+    <section id="skills" class="py-16 px-4 max-w-5xl mx-auto">
+        <div class="text-center mb-10">
+            <span class="bg-pink-100 text-pink-700 text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border border-pink-300">Keahlian RPL</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mt-2">
+                Skill & Teknologi <span class="text-purple-500">Zhara</span> 🚀
+            </h2>
+            <p class="text-slate-600 dark:text-slate-300 text-sm mt-1">Bahasa Pemrograman dan Framework yang telah dipelajari di jurusan RPL</p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            <!-- Skill Card 1: Laravel -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-2xl border-3 border-red-300 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 text-center group">
+                <div class="w-14 h-14 mx-auto mb-2 rounded-xl bg-red-100 text-red-500 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class="fa-brands fa-laravel"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-800 dark:text-white">Laravel</h3>
+                <span class="text-xs text-slate-500 dark:text-slate-400">Web Framework</span>
+                <div class="w-full bg-slate-200 h-2.5 rounded-full mt-2 overflow-hidden">
+                    <div class="bg-red-500 h-full rounded-full w-[85%]"></div>
+                </div>
+            </div>
+
+            <!-- Skill Card 2: PHP -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-2xl border-3 border-indigo-300 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 text-center group">
+                <div class="w-14 h-14 mx-auto mb-2 rounded-xl bg-indigo-100 text-indigo-500 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class="fa-brands fa-php"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-800 dark:text-white">PHP</h3>
+                <span class="text-xs text-slate-500 dark:text-slate-400">Backend Scripting</span>
+                <div class="w-full bg-slate-200 h-2.5 rounded-full mt-2 overflow-hidden">
+                    <div class="bg-indigo-500 h-full rounded-full w-[88%]"></div>
+                </div>
+            </div>
+
+            <!-- Skill Card 3: MySQL -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-2xl border-3 border-blue-300 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 text-center group">
+                <div class="w-14 h-14 mx-auto mb-2 rounded-xl bg-blue-100 text-blue-500 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-800 dark:text-white">MySQL</h3>
+                <span class="text-xs text-slate-500 dark:text-slate-400">Database Engine</span>
+                <div class="w-full bg-slate-200 h-2.5 rounded-full mt-2 overflow-hidden">
+                    <div class="bg-blue-500 h-full rounded-full w-[80%]"></div>
+                </div>
+            </div>
+
+            <!-- Skill Card 4: HTML5 -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-2xl border-3 border-orange-300 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 text-center group">
+                <div class="w-14 h-14 mx-auto mb-2 rounded-xl bg-orange-100 text-orange-500 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class="fa-brands fa-html5"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-800 dark:text-white">HTML5</h3>
+                <span class="text-xs text-slate-500 dark:text-slate-400">Web Structure</span>
+                <div class="w-full bg-slate-200 h-2.5 rounded-full mt-2 overflow-hidden">
+                    <div class="bg-orange-500 h-full rounded-full w-[95%]"></div>
+                </div>
+            </div>
+
+            <!-- Skill Card 5: CSS3 -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-2xl border-3 border-sky-300 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 text-center group">
+                <div class="w-14 h-14 mx-auto mb-2 rounded-xl bg-sky-100 text-sky-500 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class="fa-brands fa-css3-alt"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-800 dark:text-white">CSS3</h3>
+                <span class="text-xs text-slate-500 dark:text-slate-400">Web Styling</span>
+                <div class="w-full bg-slate-200 h-2.5 rounded-full mt-2 overflow-hidden">
+                    <div class="bg-sky-500 h-full rounded-full w-[90%]"></div>
+                </div>
+            </div>
+
+            <!-- Skill Card 6: JavaScript -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-2xl border-3 border-yellow-300 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 text-center group">
+                <div class="w-14 h-14 mx-auto mb-2 rounded-xl bg-yellow-100 text-yellow-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class="fa-brands fa-js"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-800 dark:text-white">JavaScript</h3>
+                <span class="text-xs text-slate-500 dark:text-slate-400">Interactive Game</span>
+                <div class="w-full bg-slate-200 h-2.5 rounded-full mt-2 overflow-hidden">
+                    <div class="bg-yellow-500 h-full rounded-full w-[85%]"></div>
+                </div>
+            </div>
+
+            <!-- Skill Card 7: Game Dev -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-2xl border-3 border-purple-300 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 text-center group">
+                <div class="w-14 h-14 mx-auto mb-2 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-800 dark:text-white">Game Logic</h3>
+                <span class="text-xs text-slate-500 dark:text-slate-400">Edukasi & Quiz</span>
+                <div class="w-full bg-slate-200 h-2.5 rounded-full mt-2 overflow-hidden">
+                    <div class="bg-purple-500 h-full rounded-full w-[90%]"></div>
+                </div>
+            </div>
+
+            <!-- Skill Card 8: Git / GitHub -->
+            <div class="bg-white dark:bg-darkCard p-4 rounded-2xl border-3 border-slate-300 shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 text-center group">
+                <div class="w-14 h-14 mx-auto mb-2 rounded-xl bg-slate-100 text-slate-800 dark:text-slate-200 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                    <i class="fa-brands fa-github"></i>
+                </div>
+                <h3 class="font-extrabold text-slate-800 dark:text-white">Git & GitHub</h3>
+                <span class="text-xs text-slate-500 dark:text-slate-400">Version Control</span>
+                <div class="w-full bg-slate-200 h-2.5 rounded-full mt-2 overflow-hidden">
+                    <div class="bg-slate-700 h-full rounded-full w-[82%]"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS SHOWCASE SECTION -->
+    <section id="projects" class="py-16 px-4 max-w-5xl mx-auto">
+        <div class="text-center mb-10">
+            <span class="bg-yellow-100 text-yellow-800 text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border border-yellow-300">Hasil Karya</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mt-2">
+                Proyek & Game <span class="text-pink-500">Zhara</span> 🎮
+            </h2>
+            <p class="text-slate-600 dark:text-slate-300 text-sm mt-1">Koleksi game interaktif dan aplikasi buatan Zhara Fitria</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Project Card 1: Game Interaktif (GitHub Main Repository) -->
+            <div class="bg-white dark:bg-darkCard rounded-3xl overflow-hidden border-4 border-pink-300 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                    <!-- Card Banner -->
+                    <div class="bg-gradient-to-r from-pink-400 to-purple-400 h-48 p-6 flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute -right-6 -top-6 text-8xl opacity-20 text-white">🎮</div>
+                        <span class="bg-white/90 text-pink-600 text-xs font-extrabold px-3 py-1 rounded-full self-start shadow-sm">Repository GitHub</span>
+                        <div>
+                            <h3 class="text-2xl font-black text-white drop-shadow-md">Game Interaktif Zahra</h3>
+                            <p class="text-pink-100 text-xs font-bold mt-1">Project Game Edukasi & Fun Script</p>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-6">
+                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                            Proyek repositori game interaktif buatan Zhara Fitria dengan logika pemrograman web yang dirancang khusus agar menarik, penuh warna, dan mudah dimainkan oleh anak-anak maupun teman-teman sekolah.
+                        </p>
+
+                        <!-- Tech Badges -->
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="bg-pink-100 text-pink-700 text-xs font-bold px-2.5 py-1 rounded-lg">HTML5</span>
+                            <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2.5 py-1 rounded-lg">JavaScript</span>
+                            <span class="bg-sky-100 text-sky-700 text-xs font-bold px-2.5 py-1 rounded-lg">CSS3</span>
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2.5 py-1 rounded-lg">Logic Game</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Footer Button -->
+                <div class="p-6 pt-0">
+                    <a href="https://github.com/zahfarfitria-bit/Zahrafitria-" target="_blank" class="bubble-btn w-full bg-pink-500 hover:bg-pink-600 text-white font-extrabold py-3 rounded-2xl shadow flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-github text-xl"></i> Buka Repo GitHub
+                    </a>
+                </div>
+            </div>
+
+            <!-- Project Card 2: Game Berhitung Interaktif -->
+            <div class="bg-white dark:bg-darkCard rounded-3xl overflow-hidden border-4 border-yellow-300 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group">
+                <div>
+                    <!-- Card Banner -->
+                    <div class="bg-gradient-to-r from-yellow-400 to-amber-500 h-48 p-6 flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute -right-6 -top-6 text-8xl opacity-20 text-white">🧮</div>
+                        <span class="bg-white/90 text-amber-700 text-xs font-extrabold px-3 py-1 rounded-full self-start shadow-sm">Playable Live Game</span>
+                        <div>
+                            <h3 class="text-2xl font-black text-white drop-shadow-md">Game Berhitung Fun</h3>
+                            <p class="text-amber-100 text-xs font-bold mt-1">Melatih Ketangkasan Matematika Anak</p>
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-6">
+                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
+                            Game matematika anak-anak interaktif untuk melatih penjumlahan, pengurangan, dan perkalian cepat dengan efek suara ceria, sistem skor, serta hadiah kembang api confetti!
+                        </p>
+
+                        <!-- Tech Badges -->
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2.5 py-1 rounded-lg">PHP / JS</span>
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-lg">Web Audio</span>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded-lg">Confetti FX</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Footer Button -->
+                <div class="p-6 pt-0">
+                    <a href="#game-zone" class="bubble-btn w-full bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-extrabold py-3 rounded-2xl shadow flex items-center justify-center gap-2 border-2 border-yellow-400">
+                        <i class="fa-solid fa-play text-lg"></i> Mainkan Di Sini Sekarang
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIVE INTERACTIVE GAME ZONE (GAME BERHITUNG) -->
+    <section id="game-zone" class="py-16 px-4 max-w-4xl mx-auto">
+        <div class="bg-gradient-to-br from-yellow-200 via-pink-200 to-purple-200 dark:from-slate-800 dark:via-purple-950 dark:to-slate-900 rounded-3xl p-6 sm:p-10 border-4 border-yellow-400 shadow-2xl relative">
+            <div class="text-center mb-6">
+                <span class="bg-white text-pink-600 text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border-2 border-pink-300 shadow-sm">Mini Game Live</span>
+                <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mt-2">
+                    🧮 Game Berhitung Ceria! 🌟
+                </h2>
+                <p class="text-slate-700 dark:text-slate-300 text-sm font-medium">Uji kemampuan matematika kamu di arena buatan Zhara ini!</p>
+            </div>
+
+            <!-- Game Box -->
+            <div id="math-game-card" class="bg-white dark:bg-darkCard rounded-2xl p-6 shadow-lg border-3 border-pink-300 text-center max-w-lg mx-auto">
+                <!-- Score & Timer Bar -->
+                <div class="flex justify-between items-center bg-pink-100 dark:bg-purple-900 p-3 rounded-xl mb-6 font-bold text-sm">
+                    <span class="text-pink-700 dark:text-pink-200">⭐ Skor: <span id="game-score" class="text-lg text-pink-600 dark:text-pink-300 font-black">0</span></span>
+                    <span class="text-purple-700 dark:text-purple-200">🏆 Rekor: <span id="game-highscore" class="text-lg text-purple-600 dark:text-purple-300 font-black">0</span></span>
+                </div>
+
+                <!-- Math Problem Display -->
+                <div class="my-6">
+                    <div id="math-question" class="text-4xl sm:text-5xl font-black text-slate-800 dark:text-yellow-300 tracking-wider">
+                        5 + 3 = ?
+                    </div>
+                </div>
+
+                <!-- Answer Input & Submit -->
+                <form onsubmit="checkMathAnswer(event)" class="flex flex-col sm:flex-row gap-3 justify-center max-w-xs mx-auto">
+                    <input type="number" id="math-answer" placeholder="Jawaban..." required class="w-full text-center text-2xl font-black p-3 rounded-xl border-3 border-purple-300 focus:border-pink-500 focus:outline-none dark:bg-slate-800 dark:text-white">
+                    <button type="submit" class="bubble-btn bg-pink-500 hover:bg-pink-600 text-white font-extrabold px-6 py-3 rounded-xl shadow border-2 border-pink-300 text-lg">
+                        Kirim!
+                    </button>
+                </form>
+
+                <!-- Feedback Message -->
+                <div id="game-feedback" class="h-8 mt-4 font-black text-base flex items-center justify-center">
+                    <span class="text-slate-500 text-sm font-normal">Ayo tebak jawabannya! 😄</span>
+                </div>
+
+                <!-- Game Level Controller Buttons -->
+                <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-center gap-2">
+                    <button onclick="setDifficulty('easy')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 hover:bg-emerald-200">Mudah (+)</button>
+                    <button onclick="setDifficulty('medium')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-yellow-100 text-yellow-800 hover:bg-yellow-200">Sedang (x)</button>
+                    <button onclick="setDifficulty('hard')" class="text-xs font-bold px-3 py-1.5 rounded-full bg-purple-100 text-purple-800 hover:bg-purple-200">Campuran 🔥</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="py-16 px-4 max-w-4xl mx-auto">
+        <div class="bg-white/90 dark:bg-darkCard/90 rounded-3xl p-6 sm:p-10 border-4 border-purple-300 shadow-xl text-center">
+            <span class="bg-purple-100 text-purple-700 text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border border-purple-300">Hubungi Zhara</span>
+            <h2 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mt-2">
+                Kirim Pesan Manis 💌
+            </h2>
+            <p class="text-slate-600 dark:text-slate-300 text-sm mt-1">Ingin mengajak berkolaborasi, diskusi game, atau menyanyi bersama?</p>
+
+            <form onsubmit="handleContactSubmit(event)" class="mt-8 space-y-4 max-w-lg mx-auto text-left">
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 dark:text-slate-300 mb-1">Nama Kamu:</label>
+                    <input type="text" id="contact-name" required placeholder="Masukkan nama kamu" class="w-full p-3.5 rounded-xl border-2 border-pink-300 focus:border-pink-500 focus:outline-none dark:bg-slate-800 dark:text-white font-medium text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-extrabold text-slate-700 dark:text-slate-300 mb-1">Pesan / Tanggapan:</label>
+                    <textarea id="contact-message" rows="4" required placeholder="Tuliskan pesan seru kamu untuk Zhara..." class="w-full p-3.5 rounded-xl border-2 border-pink-300 focus:border-pink-500 focus:outline-none dark:bg-slate-800 dark:text-white font-medium text-sm"></textarea>
+                </div>
+                <button type="submit" class="bubble-btn w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white font-extrabold py-3.5 rounded-xl shadow-md border-2 border-white flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Kirim Pesan Sekarang
+                </button>
+            </form>
+
+            <div id="contact-success" class="hidden mt-4 p-3 bg-emerald-100 text-emerald-800 rounded-xl font-bold text-sm animate-fade-in">
+                🎉 Pesan kamu berhasil dikirim! Terima kasih sudah menyapa Zhara!
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-white/80 dark:bg-darkCard/90 border-t-4 border-pink-300 py-8 px-4 text-center">
+        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2 font-extrabold text-pink-600 text-lg">
+                <span>🎤 Zhara Fitria</span> — <span class="text-xs text-slate-500">SMK Cefada RPL</span>
+            </div>
+
+            <p class="text-xs text-slate-600 dark:text-slate-400 font-bold">
+                Dibuat dengan ❤️ & Musik ✨ | PWA & Responsive Ready
+            </p>
+
+            <div class="flex gap-3 text-lg">
+                <a href="https://github.com/zahfarfitria-bit/Zahrafitria-" target="_blank" class="w-9 h-9 rounded-full bg-pink-100 dark:bg-purple-900 text-pink-600 dark:text-pink-300 flex items-center justify-center hover:scale-110 transition-transform">
+                    <i class="fa-brands fa-github"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // -------------------------------------------------------------
+        // 1. Audio Synthesizer Engine (Web Audio API for sound effects)
+        // -------------------------------------------------------------
+        let audioEnabled = true;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function toggleAudioSynth() {
+            audioEnabled = !audioEnabled;
+            const soundIcon = document.getElementById('sound-icon');
+            if (audioEnabled) {
+                soundIcon.className = "fa-solid fa-volume-high";
+            } else {
+                soundIcon.className = "fa-solid fa-volume-xmark";
+            }
+        }
+
+        function playSoundTone(freq, type = 'sine', duration = 0.2) {
+            if (!audioEnabled) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.log("Audio play error", e);
+            }
+        }
+
+        // Piano note player
+        function playNote(freq, noteName) {
+            playSoundTone(freq, 'triangle', 0.4);
+            const display = document.getElementById('note-played-display');
+            if (display) {
+                display.innerText = `🎵 Menyanyikan Nada: ${noteName} (${Math.round(freq)} Hz)!`;
+            }
+            createSparklesAtCenter();
+        }
+
+        // -------------------------------------------------------------
+        // 2. Interactive Math Game (Game Berhitung)
+        // -------------------------------------------------------------
+        let gameScore = 0;
+        let gameHighScore = localStorage.getItem('zhara_math_highscore') || 0;
+        let currentNum1 = 0;
+        let currentNum2 = 0;
+        let currentOperator = '+';
+        let currentCorrectAnswer = 0;
+        let difficulty = 'easy';
+
+        document.getElementById('game-highscore').innerText = gameHighScore;
+
+        function setDifficulty(diff) {
+            difficulty = diff;
+            generateMathQuestion();
+            playSoundTone(523.25, 'sine', 0.1);
+        }
+
+        function generateMathQuestion() {
+            const ops = difficulty === 'easy' ? ['+'] : difficulty === 'medium' ? ['+', 'x'] : ['+', '-', 'x'];
+            currentOperator = ops[Math.floor(Math.random() * ops.length)];
+
+            if (currentOperator === '+') {
+                currentNum1 = Math.floor(Math.random() * 20) + 1;
+                currentNum2 = Math.floor(Math.random() * 20) + 1;
+                currentCorrectAnswer = currentNum1 + currentNum2;
+            } else if (currentOperator === '-') {
+                currentNum1 = Math.floor(Math.random() * 20) + 10;
+                currentNum2 = Math.floor(Math.random() * currentNum1) + 1;
+                currentCorrectAnswer = currentNum1 - currentNum2;
+            } else if (currentOperator === 'x') {
+                currentNum1 = Math.floor(Math.random() * 10) + 1;
+                currentNum2 = Math.floor(Math.random() * 10) + 1;
+                currentCorrectAnswer = currentNum1 * currentNum2;
+            }
+
+            const opSymbol = currentOperator === 'x' ? '×' : currentOperator;
+            document.getElementById('math-question').innerText = `${currentNum1} ${opSymbol} ${currentNum2} = ?`;
+            document.getElementById('math-answer').value = '';
+            document.getElementById('math-answer').focus();
+        }
+
+        function checkMathAnswer(e) {
+            e.preventDefault();
+            const userAnswer = parseInt(document.getElementById('math-answer').value);
+            const feedback = document.getElementById('game-feedback');
+
+            if (userAnswer === currentCorrectAnswer) {
+                gameScore += 10;
+                if (gameScore > gameHighScore) {
+                    gameHighScore = gameScore;
+                    localStorage.setItem('zhara_math_highscore', gameHighScore);
+                    document.getElementById('game-highscore').innerText = gameHighScore;
+                }
+                document.getElementById('game-score').innerText = gameScore;
+                
+                feedback.innerHTML = '<span class="text-emerald-600 dark:text-emerald-400">🎉 Hore! Jawaban Kamu Bener Banget! (+10 Point)</span>';
+                playSoundTone(587.33, 'triangle', 0.2);
+                setTimeout(() => playSoundTone(880, 'triangle', 0.3), 100);
+
+                // Confetti explosion effect
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 40,
+                        spread: 60,
+                        origin: { y: 0.7 }
+                    });
+                }
+
+                generateMathQuestion();
+            } else {
+                feedback.innerHTML = '<span class="text-red-500">❌ Ups! Jawaban belum tepat, coba lagi ya!</span>';
+                playSoundTone(220, 'sawtooth', 0.3);
+            }
+        }
+
+        // Initialize first math question
+        generateMathQuestion();
+
+        // -------------------------------------------------------------
+        // 3. User Photo Change & Upload Logic
+        // -------------------------------------------------------------
+        function previewPhoto(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('user-photo');
+                output.src = reader.result;
+            };
+            if (event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+                playSoundTone(659.25, 'sine', 0.2);
+            }
+        }
+
+        function resetPhoto() {
+            document.getElementById('user-photo').src = "https://webschool.id/siswa/uploads/siswa_1788921492_adba57af.jpg";
+            playSoundTone(440, 'sine', 0.1);
+        }
+
+        // -------------------------------------------------------------
+        // 4. Mobile Menu Toggle
+        // -------------------------------------------------------------
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+        }
+
+        // -------------------------------------------------------------
+        // 5. Contact Form Handler
+        // -------------------------------------------------------------
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            document.getElementById('contact-success').classList.remove('hidden');
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-message').value = '';
+            playSoundTone(880, 'sine', 0.4);
+
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 70,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        // -------------------------------------------------------------
+        // 6. Interactive Sparkle Particles on Mouse / Touch
+        // -------------------------------------------------------------
+        document.addEventListener('mousemove', function(e) {
+            if (Math.random() < 0.08) { // particle frequency limit
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle-particle';
+                sparkle.style.left = e.clientX + 'px';
+                sparkle.style.top = e.clientY + 'px';
+                const colors = ['#FF8ECA', '#70D6FF', '#FFD670', '#B19FFB', '#A8F0E5'];
+                sparkle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(sparkle);
+
+                setTimeout(() => sparkle.remove(), 800);
+            }
+        });
+
+        function createSparklesAtCenter() {
+            for (let i = 0; i < 8; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle-particle';
+                sparkle.style.left = (window.innerWidth / 2 + (Math.random() * 200 - 100)) + 'px';
+                sparkle.style.top = (window.innerHeight / 2 + (Math.random() * 200 - 100)) + 'px';
+                const colors = ['#FF8ECA', '#70D6FF', '#FFD670', '#B19FFB'];
+                sparkle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                document.body.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 800);
+            }
+        }
+
+        // -------------------------------------------------------------
+        // 7. PWA Dynamic Manifest & Service Worker Registration
+        // -------------------------------------------------------------
+        const manifestData = {
+            "name": "Zhara Fitria - Profil & Fun Game Zone",
+            "short_name": "ZharaFitria",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#FF8ECA",
+            "theme_color": "#FF8ECA",
+            "description": "Profil & Game Edukasi Zhara Fitria - Siswi SMK Cefada RPL",
+            "icons": [
+                {
+                    "src": "https://api.iconify.design/twemoji:star.svg",
+                    "sizes": "192x192",
+                    "type": "image/svg+xml"
+                },
+                {
+                    "src": "https://api.iconify.design/twemoji:microphone.svg",
+                    "sizes": "512x512",
+                    "type": "image/svg+xml"
+                }
+            ]
+        };
+
+        const stringManifest = JSON.stringify(manifestData);
+        const manifestBlob = new Blob([stringManifest], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(manifestBlob);
+        document.getElementById('pwa-manifest').setAttribute('href', manifestURL);
+
+        // Service Worker setup via Blob
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'zhara-profile-v1';
+                self.addEventListener('install', (e) => {
+                    e.waitUntil(
+                        caches.open(CACHE_NAME).then((cache) => {
+                            return cache.addAll(['./']);
+                        })
+                    );
+                });
+                self.addEventListener('fetch', (e) => {
+                    e.respondWith(
+                        caches.match(e.request).then((res) => res || fetch(e.request))
+                    );
+                });
+            `;
+            const swBlob = new Blob([swCode], { type: 'text/javascript' });
+            const swUrl = URL.createObjectURL(swBlob);
+            
+            navigator.serviceWorker.register(swUrl)
+                .then(() => console.log('PWA Service Worker Ready!'))
+                .catch(err => console.log('SW error:', err));
+        }
+
+        // PWA Install Prompt Listener
+        let deferredPrompt;
+        const installBtn = document.getElementById('pwa-install-btn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBtn) {
+                installBtn.classList.remove('hidden');
+            }
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                    installBtn.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
+```
+   
